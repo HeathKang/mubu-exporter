@@ -6,6 +6,7 @@
     pip install -r requirements.txt
     ```
 2. install [edge drivers](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) for selenium, see [selenium doc](https://www.selenium.dev/documentation/webdriver/getting_started/install_drivers/) for details
+3. replace `run.py` `DRIVER_PATH` to your `edge_drivce` location;
 3. run script:
     ```
     python run.py

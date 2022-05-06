@@ -8,28 +8,18 @@ from selenium.webdriver.edge.service import Service
 
 GET_SINGLE_DOC_PATH = "https://api2.mubu.com/v3/api/document/edit/get"
 EXPORT_SINGLE_DOC_PATH = "https://mubu.com/convert/export"
+# replace DRIVER_PATH with your edge_driver path
+DRIVER_PATH = r"C:\Users\N_Kang\Desktop\tools\edgedriver_win64\msedgedriver.exe"
 PDF_PATH = 'pdf/'
 
 def save_cookied_url(url):
     opts = Options()
-    service = Service(executable_path=r"C:\Users\N_Kang\Desktop\tools\edgedriver_win64\msedgedriver.exe")
+    service = Service(executable_path=DRIVER_PATH)
     driver = webdriver.Edge(options=opts,service=service)
     driver.get(url)
     time.sleep(30)
     pickle.dump(driver.get_cookies(), open("cookies.pkl", "wb"))
     driver.close()
-
-def init_driver():
-    opts = Options()
-    service = Service(executable_path=r"C:\Users\N_Kang\Desktop\tools\edgedriver_win64\msedgedriver.exe")
-    opts.add_argument("--headless")
-
-    driver = webdriver.Edge(options=opts,service=service)
-    cookies = pickle.load(open("cookies.pkl", "rb"))
-    driver.get("https://mubu.com")
-    for cookie in cookies:
-        driver.add_cookie(cookie)
-    return driver
 
 def get_url(doc_id, doc_name, jwt_token):
     headers = {
@@ -99,7 +89,7 @@ def get_jwt_token(path="cookies.pkl") -> str:
 
 
 def main():
-    # save_cookied_url("https://mubu.com/login")
+    save_cookied_url("https://mubu.com/login")
     file_id_names = get_all_file_id_names()
     token = get_jwt_token()
     for doc_id, doc_name in file_id_names.items():
