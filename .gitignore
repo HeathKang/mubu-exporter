@@ -1,0 +1,7 @@
+.venv/
+.vscode/
+pdf/
+
+*.pyc
+*.pkl
+*.log
