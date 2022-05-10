@@ -1,4 +1,5 @@
 import os
+from pyparsing import empty
 import requests
 import rich
 from rich.console import Console
@@ -8,6 +9,8 @@ EXPORT_SINGLE_DOC_PATH = "https://mubu.com/convert/export"
 PHONE_LOGIN_PATH = "https://api2.mubu.com/v3/api/user/phone_login"
 GET_ALL_DOCUMENTS_PATH = "https://api2.mubu.com/v3/api/list/get_all_documents_page"
 PDF_PATH = 'pdf/'
+FAILED_LIST = []
+
 console = Console()
 
 def get_url(doc_id, doc_name, jwt_token):
@@ -36,11 +39,16 @@ def write_to_pdf(data, doc_name, jwt_token):
             json=payload)
 
     file_name = PDF_PATH + doc_name + '.pdf'
-    if not os.path.exists(PDF_PATH):
-        os.makedirs(PDF_PATH)
-    with open(file_name, "wb") as f:
-        console.log(f"Writing content to [bold blue]{file_name}[/bold blue]")
-        f.write(res.content)
+    file_path = file_name.replace(file_name.split('/')[-1], '')
+    try:
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+        with open(file_name, "wb") as f:
+            console.log(f"Writing content to [bold blue]{file_name}[/bold blue]")
+            f.write(res.content)
+    except Exception as e:
+        console.log(e)
+        FAILED_LIST.append(file_name)
         
 def get_all_file_id_names(jwt_token: str) -> dict:
     payload = {"start":""}
@@ -90,7 +98,14 @@ def main():
         for doc_id, doc_name in file_id_names.items():
             data = get_url(doc_id, doc_name, token)
             write_to_pdf(data, doc_name, token)
-    rich.print(f"[blue]Export done, please check [bold]{PDF_PATH}[/bold] folder to see all documents.")
+            
+    if FAILED_LIST is empty:
+        rich.print(f"[blue]Export done, please check [bold]{PDF_PATH}[/bold] folder to see all documents.")
+    else:
+        rich.print(f"[red]There are some files can't export, please check it:")
+        for file_name in FAILED_LIST:
+            rich.print(f'[blue] {file_name}')
+
 
 if __name__ == '__main__':
     main()
