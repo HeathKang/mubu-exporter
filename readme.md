@@ -9,7 +9,7 @@
     ```
     python run.py
     ```
-3. enter your phone number, password according to the guide.
+3. enter your phone number, password and export file type according to the guide.
 5. waiting for complete.
 
 # TODO
